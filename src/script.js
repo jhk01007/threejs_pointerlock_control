@@ -42,13 +42,15 @@ function init() {
   controls = new PointerLockControls(camera, document.body);
 
   const blocker = document.getElementById("blocker");
+  const instructions = document.getElementById("instructions");
 
-  blocker.addEventListener("click", function () {
+  instructions.addEventListener("click", function () {
     controls.lock();
   });
 
   controls.addEventListener("lock", function () {
     blocker.style.display = "none";
+    instructions.style.display = "none";
   });
 
   controls.addEventListener("unlock", function () {
