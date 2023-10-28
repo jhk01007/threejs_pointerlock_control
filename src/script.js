@@ -17,20 +17,108 @@ let canJump = false;
 let prevTime = performance.now();
 const velocity = new THREE.Vector3();
 const direction = new THREE.Vector3();
-const vertex = new THREE.Vector3();
-const color = new THREE.Color();
+
+// texture 
+const textureLoader = new THREE.TextureLoader();
+
+// grass texture
+const grass_textureBaseColor = textureLoader.load('../texture/grass/Ground_Grass_001_COLOR.jpg');
+const grass_textureNormalColor = textureLoader.load('../texture/grass/Ground_Grass_001_NORM.jpg');
+const grass_textureRoughnessColor = textureLoader.load('../texture/grass/Ground_Grass_001_ROUGH.jpg');
+
+// red_brick texture - 무한대 왼편 바닥
+const red_brick_textureBaseColor = textureLoader.load('../texture/red_brick/Red_Brick_basecolor.jpg');
+const red_brick_textureNormalColor = textureLoader.load('../texture/red_brick/Red_Brick_normal.jpg');
+const red_brick_textureHeightColor = textureLoader.load('../texture/red_brick/Red_Brick_height.jpg');
+const red_brick_textureRoughnessColor = textureLoader.load('../texture/red_brick/Red)Brick_roughness.jpg');
+
+// gray_brick texture - 가천관쪽 바닥
+const gray_brick_textureBaseColor = textureLoader.load('../texture/gray_brick/Gray_Brick_COLOR.jpg');
+const gray_brick_textureNormalColor = textureLoader.load('../texture/gray_brick/Gray_Brick_NORM.jpg');
+const gray_brick_textureRoughnessColor = textureLoader.load('../texture/gray_brick/Gray_Brick_ROUGH.jpg');
+
+// ground_dirt texture - 바나대(예대)쪽 바닥
+const dirt_textureBaseColor = textureLoader.load('../texture/ground_dirt/Ground_Dirt_BaseColor.jpg');
+const dirt_textureNormalColor = textureLoader.load('../texture/ground_dirt/Ground_Dirt_Normal.jpg');
+const dirt_textureHeightColor = textureLoader.load('../texture/red_brick/Ground_Dirt_Height.jpg');
+const dirt_textureRoughnessColor = textureLoader.load('../texture/ground_dirt/Ground_Dirt_Roughness.jpg');
+
+//
 
 init();
 animate();
 
+function createGrassFloor(posX, posZ) {
+  let floorGeometry = new THREE.PlaneGeometry(40, 40, 100, 100);
+  floorGeometry.rotateX(-Math.PI / 2);
+  const floorMaterial = new THREE.MeshStandardMaterial({
+    map: grass_textureBaseColor,
+    normalMap: grass_textureNormalColor,
+    roughness: grass_textureRoughnessColor
+  });
+
+  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+  floor.position.x = posX;
+  floor.position.z = posZ;
+  return floor;
+}
+
+function createRedBrickFloor(posX, posZ){
+  let floorGeometry = new THREE.PlaneGeometry(40, 40, 100, 100);
+  floorGeometry.rotateX(-Math.PI / 2);
+  const floorMaterial = new THREE.MeshStandardMaterial({
+    map: red_brick_textureBaseColor,
+    normalMap: red_brick_textureNormalColor,
+    displacementMap: red_brick_textureHeightColor,
+    roughness: red_brick_textureRoughnessColor
+  });
+
+  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+  floor.position.x = posX;
+  floor.position.z = posZ;
+  return floor;
+}
+
+function createGrayBrickFloor(posX, posZ){
+  let floorGeometry = new THREE.PlaneGeometry(40, 40, 100, 100);
+  floorGeometry.rotateX(-Math.PI / 2);
+  const floorMaterial = new THREE.MeshStandardMaterial({
+    map: gray_brick_textureBaseColor,
+    normalMap: gray_brick_textureNormalColor,
+    roughness: gray_brick_textureRoughnessColor
+  });
+
+  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+  floor.position.x = posX;
+  floor.position.z = posZ;
+  return floor;
+}
+
+function createDirtFloor(posX, posZ){
+  let floorGeometry = new THREE.PlaneGeometry(40, 40, 100, 100);
+  floorGeometry.rotateX(-Math.PI / 2);
+  const floorMaterial = new THREE.MeshStandardMaterial({
+    map: dirt_textureBaseColor,
+    normalMap: dirt_textureNormalColor,
+    displacementMap: dirt_textureHeightColor,
+    roughness: dirt_textureRoughnessColor
+  });
+
+  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+  floor.position.x = posX;
+  floor.position.z = posZ;
+  return floor;
+}
+
+
 function createTree() {
   const trunk = new THREE.Mesh(
-      new THREE.CylinderGeometry(1, 1, 5, 16),
-      new THREE.MeshBasicMaterial({ color: 0x8B4513 })
+    new THREE.CylinderGeometry(1, 1, 5, 16),
+    new THREE.MeshBasicMaterial({ color: 0x8B4513 })
   );
   const leaves = new THREE.Mesh(
-      new THREE.ConeGeometry(4, 8, 16),
-      new THREE.MeshBasicMaterial({ color: 0x00FF00 })
+    new THREE.ConeGeometry(4, 8, 16),
+    new THREE.MeshBasicMaterial({ color: 0x00FF00 })
   );
   leaves.position.y = 6.5;
   const tree = new THREE.Group();
@@ -49,9 +137,9 @@ function init() {
   camera.position.y = 10;
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x87CEEB); 
+  scene.background = new THREE.Color(0x87CEEB);
 
-  const light = new THREE.HemisphereLight(0xeeeeff, 0x777788, 0.75);
+  const light = new THREE.HemisphereLight(0xffffff, 0xffffff, 2);
   light.position.set(0.5, 1, 0.75);
   scene.add(light);
 
@@ -141,95 +229,41 @@ function init() {
 
   // floor
 
-  let floorGeometry = new THREE.PlaneGeometry(2000, 2000, 100, 100);
-  floorGeometry.rotateX(-Math.PI / 2);
 
-  // vertex displacement
-
-  let position = floorGeometry.attributes.position;
-
-  for (let i = 0, l = position.count; i < l; i++) {
-    vertex.fromBufferAttribute(position, i);
-
-    vertex.x += Math.random() * 20 - 10;
-    vertex.y += Math.random() * 2;
-    vertex.z += Math.random() * 20 - 10;
-
-    position.setXYZ(i, vertex.x, vertex.y, vertex.z);
-  }
-
-  floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
-
-  position = floorGeometry.attributes.position;
-  const colorsFloor = [];
-
-  for (let i = 0, l = position.count; i < l; i++) {
-    color.setHSL(Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75);
-    colorsFloor.push(color.r, color.g, color.b);
-  }
-
-  floorGeometry.setAttribute(
-    "color",
-    new THREE.Float32BufferAttribute(colorsFloor, 3)
-  );
-
-  const floorMaterial = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    vertexColors: true,
-  });
-
-  const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-  scene.add(floor);
-
-  // objects
-
-  // const boxGeometry = new THREE.BoxGeometry(20, 20, 20).toNonIndexed();
-
-  // position = boxGeometry.attributes.position;
-  // const colorsBox = [];
-
-  // for (let i = 0, l = position.count; i < l; i++) {
-  //   color.setHSL(Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75);
-  //   colorsBox.push(color.r, color.g, color.b);
-  // }
-
-  // boxGeometry.setAttribute(
-  //   "color",
-  //   new THREE.Float32BufferAttribute(colorsBox, 3)
-  // );
-
-  // for (let i = 0; i < 500; i++) {
-  //   const boxMaterial = new THREE.MeshPhongMaterial({
-  //     specular: 0xffffff,
-  //     flatShading: true,
-  //     vertexColors: true,
-  //   });
-  //   boxMaterial.color.setHSL(
-  //     Math.random() * 0.2 + 0.5,
-  //     0.75,
-  //     Math.random() * 0.25 + 0.75
-  //   );
-
-  //   const box = new THREE.Mesh(boxGeometry, boxMaterial);
-  //   box.position.x = Math.floor(Math.random() * 20 - 10) * 20;
-  //   box.position.y = Math.floor(Math.random() * 20) * 20 + 10;
-  //   box.position.z = Math.floor(Math.random() * 20 - 10) * 20;
-
-  //   scene.add(box);
-  //   objects.push(box);
-  // }
-
-  //
-
-  const NUM_TREES = 50;
-    for (let i = 0; i < NUM_TREES; i++) {
-        const tree = createTree();
-        tree.position.x = (Math.random() - 0.5) * 1000;
-        tree.position.z = (Math.random() - 0.5) * 1000;
-        scene.add(tree);
+  // 풀바닥 - 무한대가 들어갈 위치
+  for(let i = 0; i < 5; i++){
+    for(let j = 0; j < 5; j++){
+      const floor = createGrassFloor(i * 40, j * -40);
+      scene.add(floor);
     }
+  }
 
+  // 빨간 벽돌 - 무한대 왼편 바닥
+  for(let i = 0; i < 5 ; i++){
+    const floor = createRedBrickFloor(-40, i * -40);
+    scene.add(floor);
+  }
 
+  // 회색 벽돌 - 가천관 쪽 바닥
+  for(let i = 0; i < 6; i++){
+    for(let j = 0; j < 4; j++){
+      const floor = createGrayBrickFloor(-40 + i * 40, -200 + j * -40);
+      scene.add(floor);
+    }
+  }
+
+  // 흙 바닥 - 예대쪽 바닥
+  for(let i = 0; i < 5; i++){
+    for(let j = 0; j < 9; j++){
+      const floor = createDirtFloor(-240 + i * 40, j * -40);
+      scene.add(floor);
+    }
+  }
+
+  const tree = createTree();
+  tree.position.x = 80;
+  tree.position.z = -80;
+  scene.add(tree);
 
 
 
