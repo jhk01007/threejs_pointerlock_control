@@ -53,8 +53,8 @@ function createGrassFloor(posX, posZ) {
   floorGeometry.rotateX(-Math.PI / 2);
   const floorMaterial = new THREE.MeshStandardMaterial({
     map: grass_textureBaseColor,
-    normalMap: grass_textureNormalColor,
-    roughness: grass_textureRoughnessColor
+    // normalMap: grass_textureNormalColor,
+    // roughness: grass_textureRoughnessColor
   });
 
   const floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -68,9 +68,9 @@ function createRedBrickFloor(posX, posZ){
   floorGeometry.rotateX(-Math.PI / 2);
   const floorMaterial = new THREE.MeshStandardMaterial({
     map: red_brick_textureBaseColor,
-    normalMap: red_brick_textureNormalColor,
-    displacementMap: red_brick_textureHeightColor,
-    roughness: red_brick_textureRoughnessColor
+    // normalMap: red_brick_textureNormalColor,
+    // displacementMap: red_brick_textureHeightColor,
+    // roughness: red_brick_textureRoughnessColor
   });
 
   const floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -84,8 +84,8 @@ function createGrayBrickFloor(posX, posZ){
   floorGeometry.rotateX(-Math.PI / 2);
   const floorMaterial = new THREE.MeshStandardMaterial({
     map: gray_brick_textureBaseColor,
-    normalMap: gray_brick_textureNormalColor,
-    roughness: gray_brick_textureRoughnessColor
+    // normalMap: gray_brick_textureNormalColor,
+    // roughness: gray_brick_textureRoughnessColor
   });
 
   const floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -99,9 +99,9 @@ function createDirtFloor(posX, posZ){
   floorGeometry.rotateX(-Math.PI / 2);
   const floorMaterial = new THREE.MeshStandardMaterial({
     map: dirt_textureBaseColor,
-    normalMap: dirt_textureNormalColor,
-    displacementMap: dirt_textureHeightColor,
-    roughness: dirt_textureRoughnessColor
+    // normalMap: dirt_textureNormalColor,
+    // displacementMap: dirt_textureHeightColor,
+    // roughness: dirt_textureRoughnessColor
   });
 
   const floor = new THREE.Mesh(floorGeometry, floorMaterial);
