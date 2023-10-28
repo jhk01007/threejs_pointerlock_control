@@ -23,6 +23,22 @@ const color = new THREE.Color();
 init();
 animate();
 
+function createTree() {
+  const trunk = new THREE.Mesh(
+      new THREE.CylinderGeometry(1, 1, 5, 16),
+      new THREE.MeshBasicMaterial({ color: 0x8B4513 })
+  );
+  const leaves = new THREE.Mesh(
+      new THREE.ConeGeometry(4, 8, 16),
+      new THREE.MeshBasicMaterial({ color: 0x00FF00 })
+  );
+  leaves.position.y = 6.5;
+  const tree = new THREE.Group();
+  tree.add(trunk);
+  tree.add(leaves);
+  return tree;
+}
+
 function init() {
   camera = new THREE.PerspectiveCamera(
     75,
@@ -204,6 +220,18 @@ function init() {
   // }
 
   //
+
+  const NUM_TREES = 50;
+    for (let i = 0; i < NUM_TREES; i++) {
+        const tree = createTree();
+        tree.position.x = (Math.random() - 0.5) * 1000;
+        tree.position.z = (Math.random() - 0.5) * 1000;
+        scene.add(tree);
+    }
+
+
+
+
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
