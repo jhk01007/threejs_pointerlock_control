@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
-
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 let camera, scene, renderer, controls;
 
@@ -209,6 +209,30 @@ function init() {
   }
   //
 
+
+  // 가천관 로드하기
+
+  const loader = new GLTFLoader();
+
+  loader.load(
+    '../building/gachongwan.gltf',
+    function (gltf) {
+      const model = gltf.scene;
+      model.position.set(40, 1, -280);
+      model.scale.set(8, 8, 8);
+      model.rotation.y = (Math.PI / 2) * 3;
+      scene.add(gltf.scene);
+
+    },
+    // called while loading is progressing
+    function (xhr) {
+      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+    // called when loading has errors
+    function (error) {
+      console.log('An error happened');
+    }
+  );
   // 랜더링
   renderer = new THREE.WebGLRenderer({ antialias: true, depth: true });
   renderer.setPixelRatio(window.devicePixelRatio);
